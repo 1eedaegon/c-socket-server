@@ -24,14 +24,14 @@ int main(int argc, char *argv[]){
   }
 
   serv_sock = socket(PF_INET, SOCK_STREAM, 0);
-  if(serv_sock == -1) { err_handle("socket() error.")};
+  if(serv_sock == -1) { err_handle("socket() error."); };
   
   memset(&serv_adr, 0, sizeof(serv_adr));
-  serv_addr.sin_family=AF_INET;
-  serv_adr.sin_family.s_addr=htonl(INADDR_ANY);
+  serv_adr.sin_family=AF_INET;
+  serv_adr.sin_addr.s_addr=htonl(INADDR_ANY);
   serv_adr.sin_port=htons(atoi(argv[1]));
  
-  if(bind(serv_sock, (struct sockaddr*) &serv_adr, sizeof(serv_addr)) == -1){ err_handle("bind() error."); }
+  if(bind(serv_sock, (struct sockaddr*) &serv_adr, sizeof(serv_adr)) == -1){ err_handle("bind() error."); }
   
   if(listen(serv_sock, 5) == -1) { err_handle("listen() error."); }
 
@@ -46,5 +46,11 @@ int main(int argc, char *argv[]){
     }
     close(clnt_sock);
   }
-  return ;
+  return 0;
+}
+
+void err_handle(char *msg){
+  fputs(msg, stderr);
+  fputc('\n', stderr);
+  exit(1);
 }
