@@ -29,5 +29,30 @@ int main(int argc, char *argv[]) {
   serv_adr.sin_addr.s_addr=inet_addr(argv[1]);
   serv_adr.sin_port=htons(atoi(argv[2]));
 
-  //if(connect(sock, (struct sockaddr*) ))
+  if(connect(sock, (struct sockaddr*) &serv_adr, sizeof(serv_adr)) == -1)
+    err_handling("connect() error.");
+  puts("Connected!");
+  fputs("Operand count: ", stdout);
+  scanf("%d", &opnd_cnt);
+  opmsg[0]=(char)opnd_cnt;
+
+  for(i=0; i<opnd_cnt; i++){
+    printf("Operand %d: ", i+1);
+    scanf("%d", (int*)&opmsg[i*OPSZ+1]);
+  }
+  fgetc(stdin);
+  fputs("Operator: ",stdout);
+  scanf("%c", &opmsg[opnd_cnt*OPSZ+1]);
+  write(sock, opmsg, opnd_cnt*OPSZ+2);
+  read(sock, &result, RLT_SIZE);
+  
+  printf("Operation result: %d \n", result);
+  close(sock);
+  return 0;
+}
+
+void err_handling(char *msg){
+  fputs(msg, stderr);
+  fputc('\n', stderr);
+  exit(1);
 }
